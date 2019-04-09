@@ -1,0 +1,26 @@
+---
+- hosts: control
+  #vars:
+  #  http_port: 80
+  #  max_clients: 200
+  remote_user: guyw #todo: variable user name
+  tasks:
+  - name: Ping all machines
+    ping:
+  - name: Work dir
+    file:
+      owner: guyw # todo: take the username
+      group: randtest
+      mode: "u=rwx,g=rwx,o=rx"
+      path: /local/work
+      state: directory
+    become: yes
+
+
+  - name: Install csmith 
+    git:
+      dest: /local/work/csmith
+      repo: https://github.com/csmith-project/csmith.git
+      version: csmith-2.3.0 
+      force: yes
+  

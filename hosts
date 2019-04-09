@@ -1,0 +1,9 @@
+[experiment]
+vm0
+vm1
+vm2
+
+[control]
+vm0.ansible-test.randtest.emulab.net
+vm1.ansible-test.randtest.emulab.net
+vm2.ansible-test.randtest.emulab.net
