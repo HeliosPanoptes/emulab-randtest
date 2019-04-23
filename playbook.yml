@@ -7,6 +7,17 @@
   tasks:
   - name: Ping all machines
     ping:
+
+  - name: Update apt
+    shell:
+      cmd: apt update -y
+    become: yes
+
+  - name: Install cmake
+    shell:
+      cmd: apt install -y cmake
+    become: yes
+
   - name: Work dir
     file:
       owner: guyw # todo: take the username
@@ -16,11 +27,61 @@
       state: directory
     become: yes
 
-
-  - name: Install csmith 
+  - name: Clone csmith 
     git:
       dest: /local/work/csmith
       repo: https://github.com/csmith-project/csmith.git
       version: csmith-2.3.0 
-      force: yes
+
+  - name: Configure csmith
+    shell:
+      cmd: cmake .
+      creates: Makefile
+      chdir: /local/work/csmith
+
+  - name: Make csmith
+    shell:
+      cmd: make
+      creates: src/csmith
+      chdir: /local/work/csmith
+
+  
+  - name: Clone my testing repository
+    git:
+      repo: "https://github.com/HeliosPanoptes/emulab-randtest.git"
+      dest: /local/work/emulab_randtest
+
+# todo: make the scripts work when just pointed to the csmith folder
+  - name: Copy the scripts and other files to where they need to be to run
+    shell:
+      cmd: cp /local/work/emulab_randtest/guy-campaign.zsh /local/work/csmith/scripts/guy-campaign.zsh
+
+  - name: (cont.)    
+    shell:
+      cmd: cp /local/work/emulab_randtest/small-compilers.in /local/work/csmith/scripts/small-compilers.in
+
+  - name: Run the test suite
+    shell:
+      cmd: zsh ./guy-campaign.zsh --config small-compilers.in --count 10 > script_output.txt
+      chdir: /local/work/csmith/scripts
+
+  - name: Copy back the script output
+    fetch:
+      src: "/local/work/csmith/scripts/script_output.txt"
+      dest: /tmp
+     
+  - name: Copy back the results
+    fetch:
+      src: "{{ item }}"
+      dest: /tmp
+    with_fileglob:
+        - /local/work/csmith/scripts/test*.c
+
+
+
+
+
+      #todo: make it so I can run fuzzing on the nodes
+      # run the script
+      # copy back the results
   

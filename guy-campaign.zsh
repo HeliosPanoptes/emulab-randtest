@@ -1,8 +1,8 @@
-#!/usr/local/bin/zsh
+#!/bin/zsh
 #Let's use this as an opportunity to learn some more zsh scripting
 
 
-#directory the script is in. Cheater way to navigate around
+#directory the script is in.
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 
@@ -158,7 +158,7 @@ function test { # (cFile, currentNumber)
 }
 
 # clean starting slate
-cleanup
+#cleanup
 
 # Parse args
 # https://medium.com/@Drew_Stokes/bash-argument-parsing-54f3b81a6a8f
@@ -237,8 +237,13 @@ for (( i = 1; i != $COUNT+1; i++ )); do
     	(( WRONGCODE_BUG++ ))
     	echo "[!!!!] Wrong code bug on $cfile"
     else
-    	#delete the file, since we don't need to look at it any more
+    	#delete the files, since we don't need to look at it any more
+    	output_log="out$i.log"
+    	output_out="a$i.out"
     	rm -f $cfile
+    	rm -f $output_log
+    	rm -f $output_out
+
     fi 
 
     echo -e "[INFO] Progress: $PROGRESS\t Crashes: $CRASH_BUG\t Hangs: $HANGS\t Wrong code: $WRONGCODE_BUG"

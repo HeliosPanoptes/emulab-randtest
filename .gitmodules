@@ -1,0 +1,3 @@
+[submodule "csmith"]
+	path = csmith
+	url = https://github.com/csmith-project/csmith.git
