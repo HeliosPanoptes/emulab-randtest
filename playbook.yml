@@ -65,17 +65,36 @@
       cmd: zsh ./guy-campaign.zsh --config small-compilers.in --count 10 > script_output.txt
       chdir: /local/work/csmith/scripts
 
+
+  - name: Get files on remote machine
+    find:
+      paths: /local/work/csmith/scripts/
+      patterns: '*.c'
+    register: output_files
+
   - name: Copy back the script output
     fetch:
       src: "/local/work/csmith/scripts/script_output.txt"
-      dest: /tmp
-     
-  - name: Copy back the results
+      dest: output/{{ inventory_hostname }}_script_output.txt # this path is relative to the playbook
+      flat: yes
+
+  - name: Copy back the interesting files generated from the run
     fetch:
-      src: "{{ item }}"
-      dest: /tmp
-    with_fileglob:
-        - /local/work/csmith/scripts/test*.c
+      src: "{{ item.path }}"
+      dest: output/{{ inventory_hostname }}_{{ item.path | basename }} # this path is relative to the playbook
+      flat: yes
+    with_items: "{{ output_files.files }}"
+
+  # - debug:
+  #     var: item.path
+  #   with_items: "{{ output_files.files }}"
+     
+  # - name: Copy back the results
+  #   fetch:
+  #     src: "{{ item }}"
+  #     dest: /tmp
+  #   with_fileglob:
+  #       - /local/work/csmith/scripts/test*.c
 
 
 
