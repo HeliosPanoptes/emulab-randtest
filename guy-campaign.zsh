@@ -64,7 +64,7 @@ function generate { # (cFile)
 		rm -f $1
 		csmith $CSMITH_USER_OPTIONS --output $1
 
-		if [[ $(stat -f %z $1) -gt $MIN_PROGRAM_SIZE ]] {
+		if [[ $(du -b $1 | cut -f1) -gt $MIN_PROGRAM_SIZE ]] {
 			break
 		}
 	done
